@@ -164,3 +164,7 @@ glance_flavor: keystone
 glance_glance_api_conf_overrides:
   DEFAULT:
     image_cache_dir: None
+
+# The OSA release tag is overridden so that all artifacts
+# produced and consumed use the RPC version tag.
+openstack_release: "{{ lookup('pipe', 'cd /opt/rpc-openstack && git describe --tags --abbrev=0') }}"
