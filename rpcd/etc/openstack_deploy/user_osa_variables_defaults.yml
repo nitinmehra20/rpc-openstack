@@ -59,8 +59,11 @@ nova_cross_az_attach: False
 rabbitmq_ulimit: 65535
 
 # Memcached overrides
-# needed so that maas can consume what was only consumable in the memcached role
-memcached_connections: 1024
+# https://github.com/rcbops/rpc-openstack/issues/1048
+# memcached_memory is calculated via https://github.com/openstack/openstack-ansible-memcached_server/blob/master/defaults/main.yml#L33
+# based on container memory but this determination it not necessarily correct,
+# since memory utilization is primarily driven by the objects placed in memcached.
+memcached_connections: 16384
 
 ## Apache SSL Settings
 # These do not need to be configured unless you're creating certificates for
@@ -122,6 +125,24 @@ horizon_custom_uploads:
 # Use RPC python package index
 repo_build_pip_extra_indexes:
   - "https://rpc-repo.rackspace.com/pools"
+
+# Enumerate any apt packages that the deployer would like to pin to a particular version.
+#
+# This relies on the apt_package_pinning role from openstack-ansible.
+#
+# Pinning happens in the 'apt_pinned_packages' variable.
+#
+# apt_pinned_packages:
+#   - { package: "lxc", version: "1.0.7-0ubuntu0.1" }
+#   - { package: "libvirt-bin", version: "1.2.2-0ubuntu13.1.9" }
+#   - { package: "rabbitmq-server", origin: "www.rabbitmq.com" }
+#   - { package: "*", release: "MariaDB" }
+
+# We pin download.ceph.com so ceph packages are not downloaded for the
+# UCA repository that was added in newton.
+# For more information please see https://github.com/rcbops/u-suk-dev/issues/747
+ceph_apt_pinned_packages:
+    - { package: "*", release: "RedHat", priority: 995 }
 
 ## Host security hardening
 # The openstack-ansible-security role provides security hardening for hosts
