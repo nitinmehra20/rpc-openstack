@@ -72,6 +72,10 @@ keystone_token_driver: "sql"
 # Galera overrides
 galera_cluster_name: rpc_galera_cluster
 
+# Ensure that xtrabackup is installed from the percona repo. The version that is hardcoded
+# in OSA M & N is too old for current holland, so we need to use the repo version.
+use_percona_upstream: yes
+
 # Ceph overrides
 ceph_mons: >
   {% set _var = [] -%}
